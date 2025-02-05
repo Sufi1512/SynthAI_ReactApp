@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Code, Image, MessageSquare, Music, Video, History, Settings } from 'lucide-react';
+import { HfInference } from '@huggingface/inference';
+
+const client = new HfInference('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');
 
 type GenerationType = 'text' | 'image' | 'audio' | 'video' | 'code';
 
@@ -54,23 +57,40 @@ function DashboardPage() {
       description: 'Generate code snippets and complete functions',
       examples: ['React component for a modal', 'Python data processing script', 'API endpoint in Node.js']
     },
-    
   ];
 
   const handleGenerate = async () => {
     setIsGenerating(true);
-    // Simulated API call
-    setTimeout(() => {
+    try {
+      let result = '';
+      if (selectedType === 'code') {
+        const chatCompletion = await client.chatCompletion({
+          model: 'Qwen/Qwen2.5-Coder-32B-Instruct',
+          messages: [{
+            role: 'user',
+            content: `You are an AI that generates code only. Do not respond with anything other than code.\n\nUser request: ${inputText}`
+          }],
+          provider: 'together',
+          max_tokens: 500
+        });
+        result = chatCompletion.choices[0].message.content;
+      } else {
+        // Simulated API call for other types
+        result = `Generated ${selectedType} content will appear here...`;
+      }
       const newResult: GenerationResult = {
         id: Math.random().toString(36).substr(2, 9),
         type: selectedType,
         prompt: inputText,
-        result: `Generated ${selectedType} content will appear here...`,
+        result,
         timestamp: new Date()
       };
       setGenerationHistory(prev => [newResult, ...prev]);
+    } catch (error) {
+      console.error('Error generating content:', error);
+    } finally {
       setIsGenerating(false);
-    }, 2000);
+    }
   };
 
   const selectedTypeInfo = generationTypes.find(t => t.type === selectedType)!;
@@ -135,12 +155,21 @@ function DashboardPage() {
           </div>
 
           <div className="space-y-4">
-            <textarea
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder={`Describe what you want to generate...\nBe as detailed as possible for better results`}
-              className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-            />
+            {selectedType === 'code' ? (
+              <textarea
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder={`Describe what you want to generate...\nBe as detailed as possible for better results`}
+                className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              />
+            ) : (
+              <textarea
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder={`Describe what you want to generate...\nBe as detailed as possible for better results`}
+                className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              />
+            )}
 
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-500">
@@ -166,20 +195,39 @@ function DashboardPage() {
           </div>
 
           <div className="mt-8 p-6 bg-gray-50 rounded-lg">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Generated Content</h2>
-            <div className="h-64 flex items-center justify-center text-gray-500">
-              {generationHistory.length > 0 ? (
-                <div className="w-full">
-                  <p className="font-medium mb-2">Latest Generation:</p>
-                  <div className="bg-white p-4 rounded-lg">
-                    {generationHistory[0].result}
-                  </div>
-                </div>
-              ) : (
-                'Your generated content will appear here'
-              )}
-            </div>
+  <div className="h-64 flex items-center justify-center text-gray-500">
+    {generationHistory.length > 0 ? (
+      <div className="w-full">
+        <p className="font-medium mb-2">Latest Generation:</p>
+        {generationHistory[0].type === 'code' ? (
+          <div className="bg-gray-900 text-white p-4 rounded-lg overflow-auto h-48">
+            <pre className="whitespace-pre-wrap text-sm font-mono">
+              <code>{generationHistory[0].result}</code>
+            </pre>
           </div>
+        ) : generationHistory[0].type === 'image' ? (
+          <img src={generationHistory[0].result} alt="Generated" className="w-full rounded-lg" />
+        ) : generationHistory[0].type === 'audio' ? (
+          <audio controls className="w-full">
+            <source src={generationHistory[0].result} type="audio/mp3" />
+            Your browser does not support the audio element.
+          </audio>
+        ) : generationHistory[0].type === 'video' ? (
+          <video controls className="w-full">
+            <source src={generationHistory[0].result} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        ) : (
+          <p className="text-gray-700">{generationHistory[0].result}</p>
+        )}
+      </div>
+    ) : (
+      'Your generated content will appear here'
+    )}
+  </div>
+</div>
+
+
         </div>
 
         {showHistory && (
@@ -219,4 +267,4 @@ function DashboardPage() {
   );
 }
 
-export default DashboardPage
+export default DashboardPage;
