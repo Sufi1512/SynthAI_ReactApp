@@ -61,7 +61,7 @@ export const codeModelApi = async (prompt: string): Promise<string> => {
     });
 
     const result = await chatSession.sendMessage(
-      `${prompt}\n\nIf the user's query is not about code please ask user "I am a code generator model, I'm Sorry i cannot give the response of your query", you only provide code, and do not respond with any explanation or other text. Return only code when prompted for programming-related tasks.`
+      `${prompt}\n\nIf the user's query is not about code please ask user "I am a code generator model, I'm Sorry i cannot give the response of your query", please only provide code, and do not respond with any explanation or other text. Return only code when prompted for programming-related tasks.`
     );
     
     
