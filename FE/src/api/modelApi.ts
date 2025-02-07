@@ -1,6 +1,7 @@
 import { HfInference } from "@huggingface/inference";
-
-const client = new HfInference("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");
+const client = new HfInference("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");
+const Imgclient = new HfInference("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");
+// Model for Text
 
 export const textModelApi = async (prompt: string): Promise<string> => {
   try {
@@ -35,6 +36,7 @@ export const textModelApi = async (prompt: string): Promise<string> => {
   }
 };
 
+// Model for code
 
 export const codeModelApi = async (prompt: string): Promise<string> => {
   try {
@@ -72,7 +74,7 @@ export const codeModelApi = async (prompt: string): Promise<string> => {
   }
 };
 
-
+//Model for Audio
 export const audioModelApi = async (prompt: string): Promise<string> => {
   try {
     const response = await client.textToSpeech({
@@ -109,9 +111,11 @@ export const videoModelApi = async (prompt: string): Promise<string> => {
   }
 };
 
+//Image Model
+
 export const imageModelApi = async (prompt: string): Promise<string> => {
   try {
-    const response = await client.textToImage({
+    const response = await Imgclient.textToImage({
       model: "stabilityai/stable-diffusion-xl-base-1.0",
       inputs: prompt,
       parameters: {
