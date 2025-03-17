@@ -47,6 +47,12 @@ function Navbar() {
             >
               Pricing
             </Link>
+            <Link
+              to="/team"
+              className="text-gray-700 hover:text-indigo-600 font-medium"
+            >
+              Team
+            </Link>
             {!isLandingPage && (
               <button
                 onClick={handleUpgradeClick}

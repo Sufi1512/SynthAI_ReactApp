@@ -6,6 +6,7 @@ import DashboardPage from './pages/DashboardPage';
 import ModelsPage from './pages/ModelsPage';
 import ATSAnalyzer from './pages/Resume';
 import PaymentPage from './pages/PaymentPage';
+import TeamPage from './pages/TeamPage';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/models" element={<ModelsPage />} />
           <Route path="/resume" element={<ATSAnalyzer />} />
+          <Route path="/team" element={<TeamPage />} />
         </Routes>
       </div>
     </Router>
