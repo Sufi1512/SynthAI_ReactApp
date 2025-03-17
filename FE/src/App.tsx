@@ -5,6 +5,7 @@ import LandingPage from './pages/LandingPage';
 import DashboardPage from './pages/DashboardPage';
 import ModelsPage from './pages/ModelsPage';
 import ATSAnalyzer from './pages/Resume';
+import PaymentPage from './pages/PaymentPage';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/payment" element={<PaymentPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/models" element={<ModelsPage />} />
           <Route path="/resume" element={<ATSAnalyzer />} />
